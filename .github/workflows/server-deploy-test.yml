@@ -22,7 +22,7 @@ jobs:
       - name: Authenticate with GitHub Packages
         run: |
           echo "@newfold-labs:registry=https://npm.pkg.github.com" >> ~/.npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" >> .npmrc
       
 
       - name: Install PHP and Composer
