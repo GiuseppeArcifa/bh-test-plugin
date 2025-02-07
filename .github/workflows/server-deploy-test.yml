@@ -33,7 +33,7 @@ jobs:
           npm run create:dev
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: plugin-build
           path: ./bluehost-wordpress-plugin.zip
