@@ -21,7 +21,7 @@ jobs:
 
       - name: Authenticate with GitHub Packages
         run: |
-          echo "@newfold-labs:registry=https://npm.pkg.github.com" >> ~/.npmrc
+          echo "@newfold-labs:registry=https://npm.pkg.github.com" >> .npmrc
           echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" >> .npmrc
       
 
@@ -40,12 +40,12 @@ jobs:
           npm install
           npm run create:dev
 
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: plugin-build
-          path: ./bluehost-wordpress-plugin.zip
+#      - name: Upload build artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: plugin-build
+#          path: ./bluehost-wordpress-plugin.zip
 
-      - name: Copy .zip file to server via SCP
-        run: |
-          scp -i ~/.ssh/github-actions -o StrictHostKeyChecking=no ./bluehost-wordpress-plugin.zip ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_USERNAME }}:${{ env.PLUGIN_SERVER_PATH }}
+#      - name: Copy .zip file to server via SCP
+#        run: |
+#          scp -i ~/.ssh/github-actions -o StrictHostKeyChecking=no ./bluehost-wordpress-plugin.zip ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_USERNAME }}:${{ env.PLUGIN_SERVER_PATH }}
