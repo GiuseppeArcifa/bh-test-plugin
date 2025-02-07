@@ -1,0 +1,43 @@
+name: Deploy Plugin to Server
+
+on: push
+
+env:
+  PLUGIN_SERVER_PATH: /public_html/website_1e1b7ec3/wp-content/plugins/wp-plugin-bluehost/
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install PHP and Composer
+        run: |
+          sudo apt update
+          sudo apt install -y php-cli unzip curl
+          curl -sS https://getcomposer.org/installer | php
+          sudo mv composer.phar /usr/local/bin/composer
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Install Node dependencies and build project
+        run: |
+          npm install
+          npm run create:dev
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: plugin-build
+          path: ./bluehost-wordpress-plugin.zip
+
+      - name: Copy .zip file to server via SCP
+        run: |
+          scp -i ~/.ssh/github-actions -o StrictHostKeyChecking=no ./bluehost-wordpress-plugin.zip ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_USERNAME }}:${{ env.PLUGIN_SERVER_PATH }}
