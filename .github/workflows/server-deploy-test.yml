@@ -16,10 +16,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@newfold-labs"
 
-      - name: Authenticate with npm registry
+      - name: Authenticate with GitHub Packages
         run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" > ~/.npmrc
+          echo "@newfold-labs:registry=https://npm.pkg.github.com" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" >> ~/.npmrc
+      
 
       - name: Install PHP and Composer
         run: |
