@@ -3,7 +3,7 @@ name: Deploy Plugin to Server
 on: push
 
 env:
-  PLUGIN_SERVER_PATH: /public_html/website_1e1b7ec3/
+  PLUGIN_SERVER_PATH: public_html/website_1e1b7ec3/
 jobs:
   deploy:
     runs-on: ubuntu-latest
