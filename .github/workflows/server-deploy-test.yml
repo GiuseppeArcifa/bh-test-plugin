@@ -4,6 +4,7 @@ on: push
 
 env:
   PLUGIN_SERVER_PATH: public_html/website_1e1b7ec3/
+  PLUGIN_NAME: bluehost-wordpress-plugin
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -53,6 +54,15 @@ jobs:
       - name: Copy .zip file to server via SCP
         run: |
           scp -i github-actions -o StrictHostKeyChecking=no ./bluehost-wordpress-plugin.zip ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:${{ env.PLUGIN_SERVER_PATH }}/wp-content/uploads
+
+      - name: Extract Plugin and Activate
+        run: |
+          ssh -i github-actions -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} << 'EOF'
+            cd ${{ env.PLUGIN_SERVER_PATH }}/wp-content/plugins
+            unzip -o ../uploads/bluehost-wordpress-plugin.zip -d .
+            rm ../uploads/bluehost-wordpress-plugin.zip
+            wp plugin activate ${{ env.PLUGIN_NAME }} --path=${{ env.PLUGIN_SERVER_PATH }}
+          EOF
 
       - name: Cleanup SSH Key
         run: rm -f github-actions
