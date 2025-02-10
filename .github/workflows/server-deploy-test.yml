@@ -38,6 +38,7 @@ jobs:
       - name: Install Node dependencies and build project
         run: |
           npm install
+          npm run build
           npm run create:dev
 
       - name: Upload build artifact
