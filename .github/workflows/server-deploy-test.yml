@@ -44,24 +44,24 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: plugin-build
-          path: ./bluehost-wordpress-plugin.zip
+          path: ./${{ env.PLUGIN_NAME }}.zip
 
       - name: Setup SSH Key
         run: |
-            echo "${{ secrets.SERVER_SSH_PRIVATE_KEY }}" > github-actions
-            chmod 600 github-actions
+          echo "${{ secrets.SERVER_SSH_PRIVATE_KEY }}" > github-actions
+          chmod 600 github-actions
 
       - name: Copy .zip file to server via SCP
         run: |
-          scp -i github-actions -o StrictHostKeyChecking=no ./bluehost-wordpress-plugin.zip ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:${{ env.PLUGIN_SERVER_PATH }}/wp-content/uploads
+          scp -i github-actions -o StrictHostKeyChecking=no ./${{ env.PLUGIN_NAME }}.zip ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:${{ env.PLUGIN_SERVER_PATH }}/wp-content/uploads
 
       - name: Extract Plugin and Activate
         run: |
           ssh -i github-actions -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} << 'EOF'
-            cd ${{ env.PLUGIN_SERVER_PATH }}/wp-content/plugins
-            unzip -o ../uploads/bluehost-wordpress-plugin.zip -d .
-            rm ../uploads/bluehost-wordpress-plugin.zip
-            wp plugin activate ${{ env.PLUGIN_NAME }} --path=${{ env.PLUGIN_SERVER_PATH }}
+            cd ${{ env.PLUGIN_SERVER_PATH }}/wp-content
+            wp plugin install uploads/${{ env.PLUGIN_NAME }}.zip --force --path=./../
+            rm uploads/${{ env.PLUGIN_NAME }}.zip
+            wp plugin activate ${{ env.PLUGIN_NAME }} --path=./../
           EOF
 
       - name: Cleanup SSH Key
