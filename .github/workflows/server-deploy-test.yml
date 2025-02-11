@@ -90,7 +90,7 @@ jobs:
           start: npm start
           wait-on: ${{ env.SITE_URL }}
           config: baseUrl=${{ env.SITE_URL }}
-          command: npx cypress run --spec "${{ env.CYPRESS_TEST_PATH }}"
+          command: npx cypress run --spec ${{ env.CYPRESS_TEST_PATH }}
         env:
           BASE_URL: ${{ env.SITE_URL }}
           WP_ADMIN_USERNAME: ${{ secrets.WP_ADMIN_USERNAME }}
