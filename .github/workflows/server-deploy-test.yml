@@ -82,14 +82,14 @@ jobs:
           done
           echo "Server not ready after 5 minutes" && exit 1
 
-      - name: Run Cypress Tests
+      - name: Run Specific Cypress Tests
         uses: cypress-io/github-action@v6
         with:
           install: true
           start: npm start
           wait-on: ${{ env.SITE_URL }}
           config: baseUrl=${{ env.SITE_URL }}
-          spec: ${{ env.CYPRESS_TEST_PATH }}
-          env:
-            CYPRESS_wpUsername: ${{ secrets.WP_ADMIN_USERNAME }}
-            CYPRESS_wpPassword: ${{ secrets.WP_ADMIN_PASSWORD }}
+          command: npx cypress run --spec "${{ env.CYPRESS_TEST_PATH }}"
+        env:
+          CYPRESS_wpUsername: ${{ secrets.WP_ADMIN_USERNAME }}
+          CYPRESS_wpPassword: ${{ secrets.WP_ADMIN_PASSWORD }}
