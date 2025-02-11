@@ -92,5 +92,6 @@ jobs:
           config: baseUrl=${{ env.SITE_URL }}
           command: npx cypress run --spec "${{ env.CYPRESS_TEST_PATH }}"
         env:
-          CYPRESS_wpUsername: ${{ secrets.WP_ADMIN_USERNAME }}
-          CYPRESS_wpPassword: ${{ secrets.WP_ADMIN_PASSWORD }}
+          BASE_URL: ${{ env.SITE_URL }}
+          WP_ADMIN_USERNAME: ${{ secrets.WP_ADMIN_USERNAME }}
+          WP_ADMIN_PASSWORD: ${{ secrets.WP_ADMIN_PASSWORD }}
