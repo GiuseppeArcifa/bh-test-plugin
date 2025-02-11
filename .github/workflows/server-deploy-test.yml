@@ -5,7 +5,7 @@ on: push
 env:
   PLUGIN_SERVER_PATH: public_html/website_1e1b7ec3/
   PLUGIN_NAME: bluehost-wordpress-plugin
-  CYPRESS_TEST_PATH: test/cypress/integration/help.cy.js
+  CYPRESS_TEST_PATH: tests/cypress/integration/help.cy.js
   SITE_URL: https://dna.tqd.mybluehost.me/website_1e1b7ec3
 jobs:
   deploy:
@@ -90,7 +90,7 @@ jobs:
           start: npm start
           wait-on: ${{ env.SITE_URL }}
           config: baseUrl=${{ env.SITE_URL }}
-          command: npx cypress run --spec ../${{ env.CYPRESS_TEST_PATH }}
+          command: npx cypress run --spec ${{ env.CYPRESS_TEST_PATH }}
         env:
           BASE_URL: ${{ env.SITE_URL }}
           WP_ADMIN_USERNAME: ${{ secrets.WP_ADMIN_USERNAME }}
