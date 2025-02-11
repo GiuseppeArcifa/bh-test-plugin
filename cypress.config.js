@@ -77,7 +77,7 @@ module.exports = defineConfig( {
 
 			return config;
 		},
-		baseUrl: config.env.baseUrl,
+		baseUrl: 'http://localhost:8882',
 		specPattern: [
 			'tests/cypress/integration/**/*.cy.{js,jsx,ts,tsx}',
 			'vendor/newfold-labs/**/tests/cypress/integration/**/*.cy.{js,jsx,ts,tsx}',
