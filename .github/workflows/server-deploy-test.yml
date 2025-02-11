@@ -5,6 +5,8 @@ on: push
 env:
   PLUGIN_SERVER_PATH: public_html/website_1e1b7ec3/
   PLUGIN_NAME: bluehost-wordpress-plugin
+  CYPRESS_TEST_PATH: test/cypress/integration/help.cy.js
+  SITE_URL: https://dna.tqd.mybluehost.me/website_1e1b7ec3
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -67,3 +69,27 @@ jobs:
 
       - name: Cleanup SSH Key
         run: rm -f github-actions
+
+      - name: Wait for Server to be Ready
+        run: |
+          for i in {1..30}; do
+            if curl -s --head --request GET "${{ env.SITE_URL }}" | grep "200 OK" > /dev/null; then
+              echo "Server is up!"
+              exit 0
+            fi
+            echo "Waiting for server to be ready..."
+            sleep 10
+          done
+          echo "Server not ready after 5 minutes" && exit 1
+
+      - name: Run Cypress Tests
+        uses: cypress-io/github-action@v6
+        with:
+          install: true
+          start: npm start
+          wait-on: ${{ env.SITE_URL }}
+          config: baseUrl=${{ env.SITE_URL }}
+          spec: ${{ env.CYPRESS_TEST_PATH }}
+          env:
+            CYPRESS_wpUsername: ${{ secrets.WP_ADMIN_USERNAME }}
+            CYPRESS_wpPassword: ${{ secrets.WP_ADMIN_PASSWORD }}
