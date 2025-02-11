@@ -72,12 +72,13 @@ jobs:
 
       - name: Wait for Server to be Ready
         run: |
-          for i in {1..5}; do
-            if curl -s --head --request GET "${{ env.SITE_URL }}/wp-login.php" | grep "200 OK" > /dev/null; then
-              echo "Server is up!"
+          for i in {1..30}; do
+            STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" "${{ env.SITE_URL }}/wp-login.php")
+            if [[ "$STATUS_CODE" == "200" ]]; then
+              echo "Server is up with status code: $STATUS_CODE"
               exit 0
             fi
-            echo "Waiting for server to be ready..."
+            echo "Waiting for server to be ready... (Last status: $STATUS_CODE)"
             sleep 10
           done
           echo "Server not ready after 5 minutes" && exit 1
