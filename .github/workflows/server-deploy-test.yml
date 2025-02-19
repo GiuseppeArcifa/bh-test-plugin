@@ -3,10 +3,8 @@ name: Deploy Plugin to Server
 on: push
 
 env:
-  PLUGIN_SERVER_PATH: public_html/website_1e1b7ec3/
   PLUGIN_NAME: bluehost-wordpress-plugin
-  CYPRESS_TEST_PATH: tests/cypress/integration/
-  SITE_URL: https://dna.tqd.mybluehost.me/website_1e1b7ec3
+  CYPRESS_TEST_PATH: tests/cypress/integration/help.cy.js
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -30,7 +28,7 @@ jobs:
       - name: Authenticate with GitHub Packages
         run: |
           echo "@newfold-labs:registry=https://npm.pkg.github.com" >> .npmrc
-          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" >> .npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NEWFOLD_ACCESS_TOKEN }}" >> .npmrc
 
       - name: Install PHP and Composer
         run: |
@@ -61,12 +59,12 @@ jobs:
 
       - name: Copy .zip file to server via SCP
         run: |
-          scp -i github-actions -o StrictHostKeyChecking=no ./${{ env.PLUGIN_NAME }}.zip ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:${{ env.PLUGIN_SERVER_PATH }}/wp-content/uploads
+          scp -i github-actions -o StrictHostKeyChecking=no ./${{ env.PLUGIN_NAME }}.zip ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:${{ vars.SERVER_PATH }}/wp-content/uploads
 
       - name: Extract Plugin and Activate
         run: |
           ssh -i github-actions -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} << 'EOF'
-            cd ${{ env.PLUGIN_SERVER_PATH }}/wp-content
+            cd ${{ vars.SERVER_PATH }}/wp-content
             wp plugin install uploads/${{ env.PLUGIN_NAME }}.zip --force --path=./../
             rm uploads/${{ env.PLUGIN_NAME }}.zip
             wp plugin activate ${{ env.PLUGIN_NAME }} --path=./../
@@ -77,9 +75,8 @@ jobs:
 
       - name: Wait for Server to be Ready
         run: |
-          echo "Running in ${{ matrix.environment }}"
           for i in {1..30}; do
-            STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" "${{ env.SITE_URL }}/wp-login.php")
+            STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" "${{ vars.SITE_URL }}/wp-login.php")
             if [[ "$STATUS_CODE" == "200" ]]; then
               echo "Server is up with status code: $STATUS_CODE"
               exit 0
@@ -94,10 +91,10 @@ jobs:
         with:
           install: true
           start: npm start
-          wait-on: ${{ env.SITE_URL }}
-          config: baseUrl=${{ env.SITE_URL }}
+          wait-on: ${{ vars.SITE_URL }}
+          config: baseUrl=${{ vars.SITE_URL }}
           command: npx cypress run --spec ${{ env.CYPRESS_TEST_PATH }}
         env:
-          BASE_URL: ${{ env.SITE_URL }}
+          BASE_URL: ${{ cars.SITE_URL }}
           WP_ADMIN_USERNAME: ${{ secrets.WP_ADMIN_USERNAME }}
           WP_ADMIN_PASSWORD: ${{ secrets.WP_ADMIN_PASSWORD }}
