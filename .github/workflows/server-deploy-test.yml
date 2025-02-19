@@ -59,11 +59,11 @@ jobs:
 
       - name: Copy .zip file to server via SCP
         run: |
-          scp -i github-actions -o StrictHostKeyChecking=no ./${{ env.PLUGIN_NAME }}.zip ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }}:${{ vars.SERVER_PATH }}/wp-content/uploads
+          scp -i github-actions -o StrictHostKeyChecking=no ./${{ env.PLUGIN_NAME }}.zip ${{ vars.SERVER_USERNAME }}@${{ vars.SERVER_IP }}:${{ vars.SERVER_PATH }}/wp-content/uploads
 
       - name: Extract Plugin and Activate
         run: |
-          ssh -i github-actions -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} << 'EOF'
+          ssh -i github-actions -o StrictHostKeyChecking=no ${{ vars.SERVER_USERNAME }}@${{ vars.SERVER_IP }} << 'EOF'
             cd ${{ vars.SERVER_PATH }}/wp-content
             wp plugin install uploads/${{ env.PLUGIN_NAME }}.zip --force --path=./../
             rm uploads/${{ env.PLUGIN_NAME }}.zip
