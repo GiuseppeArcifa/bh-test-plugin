@@ -1,6 +1,10 @@
 name: Deploy Plugin to Server
 
-on: push
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 env:
   PLUGIN_NAME: bluehost-wordpress-plugin
@@ -10,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        environment: [production, staging]
+        environment: [bluehost-shared]
       fail-fast: false
 
     environment: ${{ matrix.environment }}
